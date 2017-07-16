@@ -27,7 +27,7 @@ const oauth = new OauthTwitter({
 let mainWindow
 
 function createWindow() {
-    mainWindow = new BrowserWindow({width: 500, height: 775, 'minHeight': 500, 'minWidth': 350})
+    mainWindow = new BrowserWindow({width: 350, height: 775, 'minHeight': 500, 'minWidth': 350})
 
     mainWindow.loadURL(url.format({
         pathname: 'mobile.twitter.com',
@@ -208,6 +208,7 @@ function openPreferences() {
         protocol: 'file:',
         slashes: true
     }))
+    prefsWindow.webContents.openDevTools()
 }
 
 
