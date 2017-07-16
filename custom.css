@@ -1,0 +1,5 @@
+/* Hide elements ============================== */
+
+a[href="/settings/push_notifications"] {
+    display: none;
+}

@@ -8,6 +8,7 @@ const notify = require('electron-main-notification')
 const path = require('path')
 const url = require('url')
 const open = require('open')
+const fs = require('fs');
 const Menu = electron.Menu;
 
 const dialog = require('electron').dialog;
@@ -38,6 +39,16 @@ function createWindow() {
     mainWindow.webContents.on('new-window', (event, url) => {
         event.preventDefault();
         open(url);
+    })
+
+    mainWindow.webContents.on('did-finish-load', function() {
+
+        fs.readFile(__dirname+ '/custom.css', "utf-8", function(error, data) {
+            if (!error) {
+                var formatedData = data.replace(/\s{2,10}/g, ' ').trim()
+                mainWindow.webContents.insertCSS(formatedData)
+            }
+        })
     })
 
     setUpTwitterClient()
