@@ -3,30 +3,43 @@
 <head>
     <meta charset="UTF-8">
     <title>Twitter Preferences</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="prefs.css">
 </head>
-<body class="bg-white blue-70">
-<h2>Settings</h2>
-<ul>
-    <li>
-        <h4>Push Notifications</h4>
-        <ul>
+<body>
+    <header class="page-header">
+        <h1>Settings</h1>
+    </header>
+    
+    <section class="settings-section">
+        <header class="settings-section-header">
+            <h2><i class="fa fa-bell"></i> Push Notifications</h2>
+        </header>
+        <ul class="settings-section-body">
             <li>
-                <button>
-                    Authorize the bants
+                <button class="btn" type="button">
+                    Authorize this Application &nbsp; <i class="fa fa-twitter"></i>
                 </button>
             </li>
             <li>
-                <div>
-                    <input type="checkbox">
-                    Toggle Push Notifications
-                </div>
+                <fieldset disabled>
+                    <div class="row">
+                        <legend class="label">Toggle Push Notifications</legend>
+                        <div class="options">
+                            <label>
+                                <input type="radio" name="toggle_notifications" value="on">
+                                <span>On</span>
+                            </label>
+                            <label>
+                                <input type="radio" name="toggle_notifications" value="off">
+                                <span>Off</span>
+                            </label>
+                        </div>
+                    </div>
+                </fieldset> 
             </li>
         </ul>
-    </li>
-    <li></li>
-    <li></li>
-</ul>
+    </section>
 </body>
 
 <script>

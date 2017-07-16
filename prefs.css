@@ -1,24 +1,125 @@
-body {
-    margin: 0;
-    font-family: Helvetica; /* If the user is on a Mac */
-    font-style: normal;
-    font-weight: normal;
-    font-variant: normal;
-    font-size: 13px; /* If the user is on a Mac */
+/* Reset ============================== */
+
+html, body, div, span, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, embed,
+figure, figcaption, footer, header, hgroup,
+menu, nav, section, summary,
+time, mark, audio, video 
+{
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font-size: 100%;
+  font-style: normal;
+  font-weight: normal;
+  font-variant: normal;
+  vertical-align: baseline;
 }
 
-ul {
+* {
+    box-sizing: border-box;
+}
+
+/* Typography ============================== */
+
+html {
+    font-size: 62.5%;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", sans-serif;
+    font-size: 1.4rem;
+    line-height: 1.5;
+}
+
+h1 {
+    font-size: 2.6rem;
+    font-weight: 600;
+}
+
+h2 {
+    font-size: 1.6rem;
+    font-weight: 600;
+}
+
+.fa {
+    font-size: 0.9em;
+    vertical-align: middle;
+}
+
+.label {
+    font-weight: 600;
+}
+
+
+/* Layout ============================== */
+
+.page-header {
+    padding: 20px 15px;
+    background-color: rgb(230,230,230);
+}
+
+.settings-section {
+    margin-bottom: 30px;
+}
+
+.settings-section-header {
+    background-color: #4099FF; /* Add a green color to the "active/current" link */
+    color: #fff;
+    padding: 5px 15px;
+}
+
+.settings-section-body {
     list-style-type: none;
     padding: 0;
     margin: 0;
+    padding-left: 20px;
 }
 
-li {
-    padding: 0;
+.settings-section-body li {
+    display: block;
+    padding: 20px 15px;
+    border-bottom: 1px solid rgb(230,230,230);
 }
 
-li h4:nth-of-type(1) {
-    background-color: #4099FF; /* Add a green color to the "active/current" link */
-    color: white;
-    padding: 5px 10px 5px 10px;
+.row {
+    display: flex;
+    justify-content: space-between;
+}
+
+/* Components ============================== */
+
+.btn {
+    height: 35px;
+    font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", sans-serif;
+    font-size: 1.4rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    background-color: #4099FF;
+    color: #fff;
+    border: 0;
+    border-radius: 3px;
+    padding: 0 10px;
+    cursor: pointer;
+}
+
+[disabled] {
+    opacity: 0.5;
+    cursor: not-allowed;
+    font-style: italic;
+}
+
+[disabled] .label,
+[disabled] label,
+[disabled] span {
+    font-style: italic;
 }

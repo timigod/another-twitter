@@ -25,6 +25,7 @@
     "electron-oauth-twitter": "^1.1.0",
     "electron-store": "^1.2.0",
     "keytar": "^4.0.3",
+    "open": "0.0.5",
     "twitter": "^1.7.1"
   }
 }
