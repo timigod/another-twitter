@@ -1,0 +1,30 @@
+{
+  "name": "Twitter",
+  "productName": "Twitter",
+  "version": "1.0.0",
+  "description": "A minimal Twitter application",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "keywords": [
+    "Twitter",
+    "mac",
+    "desktop",
+    "dark",
+    "theme"
+  ],
+  "author": "GitHub",
+  "license": "CC0-1.0",
+  "devDependencies": {
+    "electron": "~1.6.2",
+    "electron-rebuild": "^1.5.11"
+  },
+  "dependencies": {
+    "electron-main-notification": "^1.0.1",
+    "electron-oauth-twitter": "^1.1.0",
+    "electron-store": "^1.2.0",
+    "keytar": "^4.0.3",
+    "twitter": "^1.7.1"
+  }
+}
