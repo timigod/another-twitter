@@ -13,7 +13,6 @@ authButton.addEventListener('click', function () {
 });
 
 notificationsToggle.addEventListener('change', function () {
-  console.log(this.checked)
   if (this.checked == true) {
     store.set('notifications?', 'on')
   } else {
@@ -23,8 +22,6 @@ notificationsToggle.addEventListener('change', function () {
 
 isAuthed.then((bool) => {
   const isOn = store.get('notifications?')
-  console.log(bool)
-  console.log(isOn)
   if (bool) notificationsFieldset.disabled = false
   if (bool && isOn == "on") notificationsToggle.checked = true
 })

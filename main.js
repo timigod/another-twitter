@@ -23,10 +23,10 @@ const oauth = new OauthTwitter({
 // be closed automatically when the JavaScript object is garbage collected.
 let mainWindow
 let prefsWindow
-let isPrefsOpen = false
+let isPrefsOpen
 
 function createWindow() {
-
+  isPrefsOpen = false;
   mainWindow = new BrowserWindow({width: 350, height: 675, 'minHeight': 500, 'minWidth': 350})
 
   mainWindow.loadURL(url.format({
@@ -110,7 +110,7 @@ function setUpTwitterClient() {
 
       }
     }).catch((error) => {
-    setTimeout(setUpTwitterClient, 960000);
+    setTimeout(setUpTwitterClient(), 960000);
   })
 }
 
@@ -124,28 +124,29 @@ function startStream() {
         access_token_secret: secret
       })
 
-      const stream = client.stream('user', {
-        with: 'user'
-      })
+      const stream = client.stream('user', {with: 'user'})
 
-      let code = `let notificationsFieldset = document.getElementById('notifications_fieldset');
-            let notificationsToggle = document.getElementById('toggle_notifications');
-            notificationsToggle.checked = true;
-            notificationsFieldset.disabled = false;`
+      let code =
+        `let notificationsFieldset = document.getElementById('notifications_fieldset');
+         let notificationsToggle = document.getElementById('toggle_notifications');
+         notificationsToggle.checked = true;
+         notificationsFieldset.disabled = false;`
 
       const store = new Store();
-      store.set('notifications?', 'on')
 
-      if (prefsWindow) {
+      if (isPrefsOpen) {
         prefsWindow.webContents.executeJavaScript(code)
       }
+
+      store.set('notifications?', 'on')
+
 
       stream.on('data', (tweet) => {
         displayNotification(tweet)
       })
 
       stream.on('error', (error) => {
-        throw(error);
+        setTimeout(startStream, 120000);
       })
     })
 }
@@ -234,7 +235,7 @@ global.auth = function () {
       if (bool) {
         dialog.showErrorBox('Authorize for Notifications', 'You have already authorized this application')
       } else {
-        dialog.showErrorBox('Enable Notifications', 'To enable notifications, you will have to grant this application read and write access to your Twitter Account.' +
+        dialog.showErrorBox('Enable Notifications', 'To enable notifications, you will have to grant this application read access to your Twitter Account. ' +
           'This is completely separate from the initial signing in you did earlier. In the earlier case, you were signing in to Twitter\'s mobile web application directly.')
         oauth.startRequest().then((result) => {
           return Promise.all([
