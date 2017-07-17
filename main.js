@@ -1,22 +1,18 @@
 const electron = require('electron')
-// Module to control application life.
 const app = electron.app
-// Module to create native browser window.
 const BrowserWindow = electron.BrowserWindow
 const notify = require('electron-main-notification')
-
 const path = require('path')
 const url = require('url')
 const open = require('open')
 const Menu = electron.Menu;
-
-const dialog = require('electron').dialog;
-const OauthTwitter = require('electron-oauth-twitter')
+const Store = require('electron-store');
 const keytar = require('keytar')
+const dialog = require('electron').dialog
 const Twitter = require('twitter')
 const consumerKey = 'OyWHz72pjHN2BU6CmIx5mg1LX'
 const consumerSecret = 'BwdaNngCpIAeEOYTYWGniW40dGXAPMQer3fqjW9HYsyLPRMOdY'
-const Store = require('electron-store');
+const OauthTwitter = require('electron-oauth-twitter')
 const oauth = new OauthTwitter({
     key: consumerKey,
     secret: consumerSecret
@@ -25,8 +21,11 @@ const oauth = new OauthTwitter({
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let mainWindow
+let prefsWindow
+let isPrefsOpen = false
 
 function createWindow() {
+
     mainWindow = new BrowserWindow({width: 350, height: 775, 'minHeight': 500, 'minWidth': 350})
 
     mainWindow.loadURL(url.format({
@@ -41,7 +40,6 @@ function createWindow() {
     })
 
     setUpTwitterClient()
-
 
     const menu = Menu.buildFromTemplate(menuTemplate)
     Menu.setApplicationMenu(menu)
@@ -65,7 +63,6 @@ app.on('activate', function () {
         createWindow()
     }
 })
-
 
 function credentials() {
     return Promise.all([
@@ -93,55 +90,63 @@ function setUpTwitterClient() {
                     startStream()
                 } else {
                     client.get('account/verify_credentials', function (error, obj, response) {
-                        if (error) throw error;
+                        if (error) console.log(error)
                         store.set('id', obj.id_str)
                         store.set('screenName', obj.screen_name)
                         startStream()
                     });
                 }
 
-
             }
+        }).catch((error) => {
+        console.error(error)
+    })
+}
+
+function startStream() {
+    credentials()
+        .then(([accessToken, secret]) => {
+            const client = new Twitter({
+                consumer_key: consumerKey,
+                consumer_secret: consumerSecret,
+                access_token_key: accessToken,
+                access_token_secret: secret
+            })
+
+            const stream = client.stream('user', {
+                with: 'user'
+            })
+
+            let code = `let notificationsFieldset = document.getElementById('notifications_fieldset');
+            let notificationsToggle = document.getElementById('toggle_notifications');
+            notificationsToggle.checked = true;
+            notificationsFieldset.disabled = false;`
+
+            if (prefsWindow) {
+                prefsWindow.webContents.executeJavaScript(code)
+            }
+
+            stream.on('data', (tweet) => {
+                displayNotification(tweet)
+            })
+
+            stream.on('error', (error) => {
+                throw(error);
+            })
         })
-
-    function startStream() {
-        credentials()
-            .then(([accessToken, secret]) => {
-                const client = new Twitter({
-                    consumer_key: consumerKey,
-                    consumer_secret: consumerSecret,
-                    access_token_key: accessToken,
-                    access_token_secret: secret
-                })
-
-                const stream = client.stream('user', {
-                    with: 'user'
-                })
+}
 
 
-                stream.on('data', (tweet) => {
-                    console.log(tweet.text)
-                    displayNotification(tweet)
-                })
+function displayNotification(tweet) {
+    const store = new Store()
+    const screenName = store.get('screenName')
+    const id = store.get('id')
 
-                stream.on('error', (error) => {
-                    throw(error);
-                })
-            })
+    if (tweet.user.id_str != id && tweet.user.screen_name != screenName) {
+        notify(tweet.user.screen_name, {body: tweet.text}, () => {
+
+        })
     }
-
-    function displayNotification(tweet) {
-        const store = new Store()
-        const screenName = store.get('screenName')
-        const id = store.get('id')
-
-        if (tweet.user.id_str != id && tweet.user.screen_name != screenName) {
-            notify(tweet.user.screen_name, {body: tweet.text}, () => {
-
-            })
-        }
-    }
-
 }
 
 
@@ -149,30 +154,6 @@ const menuTemplate = [
     {
         label: 'Twitter',
         submenu: [
-            {
-                label: 'Enable Notifications',
-                click(){
-                    credentials()
-                        .then(([accessToken, secret]) => {
-                            if (accessToken && secret) {
-                                dialog.showErrorBox('Enable Notifications', 'Notifications have already been enabled')
-                            } else {
-                                dialog.showErrorBox('Enable Notifications', 'To enable notifications, you will have to grant this application read and write access to your Twitter Account.' +
-                                    'This is completely separate from the initial signing in you did earlier. In the earlier case, you were signing in to Twitter\'s mobile web application directly.')
-                                oauth.startRequest().then((result) => {
-                                    return Promise.all([
-                                        keytar.setPassword('TwitterOauth', 'AccessToken', result.oauth_access_token),
-                                        keytar.setPassword('TwitterOauth', 'Secret', result.oauth_access_token_secret)
-                                    ])
-                                }).then(() => {
-                                    setUpTwitterClient();
-                                }).catch((error) => {
-                                    console.error(error, error.stack);
-                                })
-                            }
-                        })
-                }
-            },
             {
                 label: 'Preferences',
                 click(){
@@ -202,13 +183,48 @@ const menuTemplate = [
 ]
 
 function openPreferences() {
-    const prefsWindow = new BrowserWindow({width: 400, height: 500, 'minHeight': 500, 'minWidth': 400})
-    prefsWindow.loadURL(url.format({
-        pathname: path.join(__dirname, 'preferences.html'),
-        protocol: 'file:',
-        slashes: true
-    }))
-    prefsWindow.webContents.openDevTools()
+    if (!isPrefsOpen) {
+        prefsWindow = new BrowserWindow({width: 400, height: 500, 'minHeight': 500, 'minWidth': 400})
+        prefsWindow.loadURL(url.format({
+            pathname: path.join(__dirname, 'preferences.html'),
+            protocol: 'file:',
+            slashes: true
+        }))
+
+        prefsWindow.webContents.on('did-finish-load', () => {
+            isPrefsOpen = true
+        })
+
+        prefsWindow.webContents.on('closed', () => {
+            isPrefsOpen = false
+        })
+
+        // TODO: Remove this
+        prefsWindow.webContents.openDevTools()
+    }
+}
+
+global.auth = function () {
+    credentials()
+        .then(([accessToken, secret]) => {
+            if (accessToken && secret) {
+                dialog.showErrorBox('Authorize for Notifications', 'You have already authorized this application')
+                return true
+            } else {
+                dialog.showErrorBox('Enable Notifications', 'To enable notifications, you will have to grant this application read and write access to your Twitter Account.' +
+                    'This is completely separate from the initial signing in you did earlier. In the earlier case, you were signing in to Twitter\'s mobile web application directly.')
+                oauth.startRequest().then((result) => {
+                    return Promise.all([
+                        keytar.setPassword('TwitterOauth', 'AccessToken', result.oauth_access_token),
+                        keytar.setPassword('TwitterOauth', 'Secret', result.oauth_access_token_secret)
+                    ])
+                }).then(() => {
+                    setUpTwitterClient();
+                }).catch((error) => {
+                    console.error(error, error.stack);
+                })
+            }
+        })
 }
 
 

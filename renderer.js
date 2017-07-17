@@ -1,3 +1,12 @@
-// This file is required by the index.html file and will
-// be executed in the renderer process for that window.
-// All of the Node.js APIs are available in this process.
+const remote = require('electron').remote
+const authButton = document.getElementById('auth_button');
+const notificationsToggle = document.getElementById('toggle_notifications');
+const notificationsFieldset = document.getElementById('notifications_fieldset');
+const auth = remote.getGlobal('auth')
+
+authButton.addEventListener('click', function () {
+    auth()
+});
+
+
+

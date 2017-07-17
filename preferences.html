@@ -7,43 +7,37 @@
     <link rel="stylesheet" href="prefs.css">
 </head>
 <body>
-    <header class="page-header">
-        <h1>Settings</h1>
+<header class="page-header">
+    <h1>Settings</h1>
+</header>
+
+<section class="settings-section">
+    <header class="settings-section-header">
+        <h2><i class="fa fa-bell"></i> Push Notifications</h2>
     </header>
-    
-    <section class="settings-section">
-        <header class="settings-section-header">
-            <h2><i class="fa fa-bell"></i> Push Notifications</h2>
-        </header>
-        <ul class="settings-section-body">
-            <li>
-                <button class="btn" type="button">
-                    Authorize this Application &nbsp; <i class="fa fa-twitter"></i>
-                </button>
-            </li>
-            <li>
-                <fieldset disabled>
-                    <div class="row">
-                        <legend class="label">Toggle Push Notifications</legend>
-                        <div class="options">
-                            <label>
-                                <input type="radio" name="toggle_notifications" value="on">
-                                <span>On</span>
-                            </label>
-                            <label>
-                                <input type="radio" name="toggle_notifications" value="off">
-                                <span>Off</span>
-                            </label>
-                        </div>
+    <ul class="settings-section-body">
+        <li>
+            <button id="auth_button" class="btn" type="button">
+                Authorize for Push Notifications &nbsp; <i class="fa fa-twitter"></i>
+            </button>
+        </li>
+        <li>
+            <fieldset id="notifications_fieldset" disabled>
+                <div class="row">
+                    <legend class="label">Toggle Push Notifications</legend>
+                    <div class="options">
+                        <label>
+                            <input type="checkbox" id="toggle_notifications">
+                        </label>
                     </div>
-                </fieldset> 
-            </li>
-        </ul>
-    </section>
+                </div>
+            </fieldset>
+        </li>
+    </ul>
+</section>
 </body>
 
 <script>
-    // You can also require other files to run in this process
     require('./renderer.js')
 </script>
 </html>
