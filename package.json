@@ -1,18 +1,20 @@
 {
-  "name": "Twitter",
-  "productName": "Twitter",
-  "version": "1.0.0",
-  "description": "A minimal Twitter application",
+  "name": "AnotherTwitter",
+  "productName": "Another Twitter",
+  "version": "0.1.0",
+  "description": "A minimal Twitter of macOS application",
   "main": "main.js",
   "scripts": {
     "start": "electron ."
   },
   "keywords": [
-    "Twitter",
+    "twitter",
     "mac",
     "desktop",
-    "dark",
-    "theme"
+    "pwa",
+    "progressive",
+    "web",
+    "app"
   ],
   "author": "GitHub",
   "license": "CC0-1.0",
